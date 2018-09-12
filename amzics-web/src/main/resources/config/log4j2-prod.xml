@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<!-- status: 设置log4j2自身内部的信息输出，可以不设置，默认是DEBUG,当设置成trace时，可以看到log4j2内部各种详细输出 -->
+<!-- monitorInterval：Log4j能够自动检测修改配置 文件和重新配置本身，设置间隔秒数-->
+<configuration status="WARN" monitorInterval="30">
+    <properties>
+        <property name="pattern">%d{yyyy-MM-dd HH:mm:ss,SSS} %5p %c{1}:%L - %m%n</property>
+        <!-- 正式环境-日志路径 -->
+        <property name="path">/usr/local/tomcat-8.5.33/logs/seeics</property>
+    </properties>
+    <!--先定义所有的appender-->
+    <appenders>
+        <!--这个输出控制台的配置-->
+        <console name="Console" target="SYSTEM_OUT" follow="true">
+            <!--输出日志的格式-->
+            <patternLayout>
+                <pattern>${pattern}</pattern>
+            </patternLayout>
+        </console>
+        <!-- 这个会打印出所有的info级别以上，ERROR级别以下的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
+        <rollingFile name="RollingFileInfo" fileName="${path}/info.log"
+                     filePattern="${path}/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log">
+            <filters>
+                <!-- 输出 INFO 级别及以上级别的信息，ERROR 级别及以上级别的直接拒绝-->
+                <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            </filters>
+            <patternLayout>
+                <pattern>${pattern}</pattern>
+            </patternLayout>
+            <policies>
+                <timeBasedTriggeringPolicy/>
+                <sizeBasedTriggeringPolicy size="20 MB"/>
+            </policies>
+        </rollingFile>
+
+        <rollingFile name="RollingFileError" fileName="${path}/error.log"
+                     filePattern="${path}/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log">
+            <!--<RollingFile name="RollingFileError" fileName="${sys:catalina.home}/logs/workics/error.log" filePattern="${sys:catalina.home}/logs/workics/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log">-->
+            <thresholdFilter level="ERROR"/>
+            <patternLayout>
+                <pattern>${pattern}</pattern>
+            </patternLayout>
+            <policies>
+                <timeBasedTriggeringPolicy/>
+                <sizeBasedTriggeringPolicy size="30 MB"/>
+            </policies>
+        </rollingFile>
+
+    </appenders>
+    <!--然后定义logger，只有定义了logger并引入的appender，appender才会生效-->
+    <loggers>
+        <!--过滤掉spring一些无用的debug信息-->
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.mybatis" level="DEBUG"/>
+        <root level="all">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFileInfo"/>
+            <appender-ref ref="RollingFileError"/>
+        </root>
+    </loggers>
+</configuration>

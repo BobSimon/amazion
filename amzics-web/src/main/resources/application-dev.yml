@@ -1,0 +1,11 @@
+amzics:
+  open-captcha: false
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/seeics?useSSL=true&verifyServerCertificate=false&tinyInt1isBit=true&useUnicode=true&characterEncoding=utf8
+    username: steven
+    password: 6KpynJ00n2tZO&Aqt
+
+logging:
+  config: classpath:config/log4j2-dev.xml

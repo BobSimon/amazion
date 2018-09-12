@@ -1,0 +1,63 @@
+amzics:
+  open-captcha: true
+  throw-exception-stack: false
+
+server:
+  # 端口
+  port: 8081
+
+spring:
+  profiles:
+    # 环境
+    active: dev
+  # 数据源
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      # 最小空闲连接
+      minimum-idle: 5
+      # 最大空闲连接
+      maximum-pool-size: 20
+      # 空闲连接超过这个时间没有使用会被close，默认：600000
+      idle-timeout: 600000
+      # connection在pool的存活时间，默认：1800000
+      max-lifetime: 1800000
+      # 连接数据库超时
+      connection-timeout: 30000
+      # commit交给spring来做
+      auto-commit: false
+      # 测试语句
+      connection-test-query: SELECT 1
+      # pool的昵称
+      pool-name: HikariDataSource
+  # redis
+  redis:
+    host: localhost
+    port: 6379
+    password:
+    database: 0
+  # 邮箱
+  mail:
+    host: smtp.qq.com
+    port: 465
+    username: 750502229@qq.com
+    password: vmewwbbvzsyobbca
+    properties:
+      mail:
+        default-encoding: UTF-8
+        smtp:
+          auth: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+
+# mybatis plus
+mybatis-plus:
+  # mybatis主配置文件
+  config-location: classpath:config/mybatis-config.xml
+  # mapper文件位置
+  mapper-locations: classpath:mapper/*Mapper.xml
+  # 别名所在包
+  type-aliases-package: com.amzics.model.domain
+
+
